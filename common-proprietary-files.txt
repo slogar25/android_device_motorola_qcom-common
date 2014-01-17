@@ -9,6 +9,7 @@ bin/nl_listener
 bin/port-bridge
 bin/qseecomd
 bin/radish
+bin/time_daemon
 
 # Libs
 lib/libDivxDrm.so
@@ -19,11 +20,15 @@ lib/libExtendedExtractor.so
 lib/libfrsdk.so
 lib/libmmosal.so
 lib/libmmparser.so
+lib/libOmxAacDec.so
+lib/libOmxAmrwbplusDec.so
+lib/libOmxEvrcDec.so
+lib/libOmxQcelp13Dec.so
+lib/libOmxWmaDec.so
 lib/libqc-opt.so
 lib/libQSEEComAPI.so
 lib/libtime_genoff.so
 lib/libxml.so
-vendor/lib/libgeofence.so
 
 # Graphics/video firmware
 etc/firmware/vidc.b00
@@ -35,6 +40,7 @@ etc/firmware/vidc_1080p.fw
 etc/firmware/vidcfw.elf
 
 # DRM
+lib/libWVphoneAPI.so
 vendor/lib/drm/libdrmwvmplugin.so
 vendor/lib/libwvdrm_L1.so
 vendor/lib/libwvm.so

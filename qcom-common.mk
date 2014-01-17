@@ -13,6 +13,9 @@
 # limitations under the License.
 
 LOCAL_PATH := device/motorola/qcom-common
+
+PRODUCT_BOOT_JARS += qcmediaplayer
+
 # Permissions
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
@@ -44,10 +47,7 @@ TARGET_SPECIFIC_HEADER_PATH := $(LOCAL_PATH)/include
 PRODUCT_PACKAGES += \
     audio.a2dp.default \
     audio.usb.default \
-    audio_policy.msm8960 \
-    audio.primary.msm8960 \
     audio.r_submix.default \
-    alsa.msm8960 \
     libalsa-intf \
     libaudio-resampler \
     libaudioutils \
@@ -58,29 +58,18 @@ PRODUCT_PACKAGES += \
 
 # Motorola
 PRODUCT_PACKAGES += \
-    aplogd \
-    modemlog
+    aplogd
 
 # Misc
 PRODUCT_PACKAGES += \
     tcpdump \
     Torch
 
-# Lights
-PRODUCT_PACKAGES += lights.msm8960
-
 # Charger
 PRODUCT_PACKAGES += charger charger_res_images
 
 # QRNGD
 PRODUCT_PACKAGES += qrngd
-
-# HAL
-PRODUCT_PACKAGES += \
-    copybit.msm8960 \
-    gralloc.msm8960 \
-    hwcomposer.msm8960 \
-    power.msm8960
 
 # Misc
 PRODUCT_PACKAGES += \
@@ -95,8 +84,7 @@ PRODUCT_PACKAGES += \
 
 # Qcom SoftAP
 PRODUCT_PACKAGES += \
-    libQWiFiSoftApCfg \
-    libqsap_sdk
+    libQWiFiSoftApCfg
 
 # Live Wallpapers
 PRODUCT_PACKAGES += \
@@ -108,8 +96,9 @@ PRODUCT_PACKAGES += \
     librs_jni
 
 # Wifi
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/config/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf
+PRODUCT_PACKAGES += \
+    p2p_supplicant_overlay.conf \
+    wpa_supplicant_overlay.conf
 
 # Ramdisk
 PRODUCT_PACKAGES += \
@@ -117,17 +106,16 @@ PRODUCT_PACKAGES += \
 
 # Init scripts
 PRODUCT_PACKAGES += \
+    init.class_main.sh \
     init.crda.sh \
     init.qcom.bt.sh \
     init.qcom.class_core.sh \
-    init.qcom.class_main.sh \
     init.qcom.coex.sh \
     init.qcom.early_boot.sh \
     init.qcom.efs.sync.sh \
     init.qcom.fm.sh \
     init.qcom.mdm_links.sh \
     init.qcom.modem_links.sh \
-    init.qcom.ril.sh \
     init.qcom.syspart_fixup.sh \
     init.qcom.thermal_conf.sh \
     init.qcom.usb.sh
@@ -135,7 +123,8 @@ PRODUCT_PACKAGES += \
 # Thermal profiles
 PRODUCT_PACKAGES += \
     thermald-8960.conf \
-    thermald-ghost.conf
+    thermald-ghost.conf \
+    thermal-engine-8226.conf
 
 # Scripts
 PRODUCT_COPY_FILES += \
@@ -154,7 +143,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.composition.type=dyn \
     persist.hwc.mdpcomp.enable=true \
     debug.mdpcomp.logs=0 \
-    debug.enabletr=0
+    debug.enabletr=0 \
+    mm.enable.smoothstreaming=true
 
 # QCOM Display
 PRODUCT_PACKAGES += \
@@ -176,7 +166,8 @@ PRODUCT_PACKAGES += \
     libOmxAmrEnc \
     libOmxEvrcEnc \
     libOmxQcelp13Enc \
-    libdashplayer
+    libdashplayer \
+    qcmediaplayer
 
 # Filesystem management tools
 PRODUCT_PACKAGES += \
@@ -187,19 +178,21 @@ PRODUCT_PACKAGES += \
 
 #wifi
 PRODUCT_PACKAGES += \
+    hostapd.accept \
+    hostapd.deny \
     hostapd_default.conf \
     libnetcmdiface
 
 # Symlinks
 PRODUCT_PACKAGES += \
     libxml2 \
-    mbhc.bin \
-    wcd9310_anc.bin \
     WCNSS_qcom_wlan_nv.bin
 
 # QC Perf
+ifneq ($(TARGET_BOARD_PLATFORM),msm8226)
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.vendor.extension_library=/system/lib/libqc-opt.so
+endif
 
 # QCOM
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -210,7 +203,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.audio.fluence.mode=endfire \
     persist.audio.vr.enable=false \
     persist.audio.handset.mic=digital \
-    ro.qc.sdk.audio.fluencetype=fluence \
     ro.qc.sdk.audio.ssr=false
 
 # Bluetooth
@@ -237,8 +229,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.qc.sub.rdump.max=20
 
 # Radio and Telephony
+ifneq ($(TARGET_BOARD_PLATFORM),msm8226)
 PRODUCT_PROPERTY_OVERRIDES += \
-    rild.libpath=/system/lib/libril-qc-qmi-1.so \
+    rild.libpath=/system/lib/libril-qc-qmi-1.so
+endif
+PRODUCT_PROPERTY_OVERRIDES += \
     ril.subscription.types=NV,RUIM \
     keyguard.no_require_sim=true \
     ro.use_data_netmgrd=true \
@@ -247,5 +242,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.radio.call_type=1 \
     ro.config.vc_call_vol_steps=7 \
     ro.modem.no_wdog_chk=1
+
+PRODUCT_GMS_CLIENTID_BASE ?= android-motorola
+
+# QC time services
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.timed.enable=true
 
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
